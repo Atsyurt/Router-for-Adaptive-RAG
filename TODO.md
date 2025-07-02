@@ -50,15 +50,22 @@ The project uses `LangGraph` to manage the workflow.
 ### **Phase 3: Custom PyTorch Classifier for Routing**
 *Goal: Train a small, fast, and efficient Transformer-based classifier using pure PyTorch and integrate it into the graph for production-level routing.*
 
-- [ ] **Step 3.1 (AI):** **Create `train_classifier.py` Script.**
+**CRITICAL REMINDER:** The classifier's purpose is to predict question complexity based *only on the question text itself*, not the source document. This aligns with the Adaptive-RAG paper's methodology, where the classifier acts as a router *before* content is fetched or processed. All future implementations must adhere to this principle.
+
+- [x] **Step 3.1 (AI):** **Create `train_classifier.py` Script.**
     - This script will be written using pure PyTorch.
     - It will define a custom `Dataset` to load our labeled JSON data.
     - It will define a custom `nn.Module` class that wraps a pre-trained Hugging Face model (e.g., DistilBERT) and adds a classification head.
     - It will contain a from-scratch training loop to fine-tune the model on our data.
-- [ ] **Step 3.2 (User):** Execute the `train_classifier.py` script to train and save the custom model.
+- [x] **Step 3.2 (User):** Execute the `train_classifier.py` script to train and save the custom model.
 - [ ] **Step 3.3 (AI):** **Integrate the Trained Model.**
-    - Create a new node, `route_with_pytorch_classifier`, in  new '.py' file.
+    - Create a new node, `route_with_pytorch_classifier`, in a new `.py` file.
     - This node will load our trained PyTorch model.
     - It will perform inference locally and efficiently to choose the question route.
 - [ ] **Step 3.4 (AI):** Update the graph to use the new PyTorch-based routing node instead of the LLM-based one.
 - [ ] **Step 3.5 (User):** Final testing of the fully autonomous agent with the integrated high-performance classifier.
+- [ ] **Step 3.6 (AI):** **Create `test_ui.py` for Classifier Validation.**
+    - Build a simple web UI using Gradio.
+    - The UI will take a question as input.
+    - It will use the trained PyTorch model to classify the question as Type A, B, or C and display the prediction.
+    - This provides a quick way to interactively test and validate the classifier's performance.

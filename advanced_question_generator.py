@@ -101,7 +101,7 @@ def generate_question_A(state):
         return {"question": None}
         
     prompt = PromptTemplate.from_template(
-        """Based *only* on the context provided below, generate a single, clear, and concise question that can be answered directly from this text.
+        """Based *only* on the context provided below, generate a single, clear, and concise question that can be answered directly from this text and put some clues for about it is related a context or a document.
         The question should be simple and factual (Type A).
 
         CONTEXT:
@@ -128,8 +128,8 @@ def generate_question_B(state):
         question: str = Field(description="A question that is highly relevant to the main topic but cannot be answered by the provided context.")
 
     prompt = PromptTemplate.from_template(
-        """Your task is to generate a single question about a specific topic that CANNOT be answered from the given text context.
-        The question must be specific and relevant to the overall topic, but the answer should not be present in the context.
+        """Your task is to generate a single and very Straightforward question about a specific topic that CANNOT be answered from the given text context.
+        The question must be specific and relevant to the overall topic and for more related general knowledge of known facts by model.
 
         TOPIC: {topic}
 
@@ -174,9 +174,21 @@ def generate_question_C(state):
         answer: str = Field(description="A concise answer to the question, derived by combining information from both text chunks.")
 
     prompt = PromptTemplate.from_template(
-        """Your task is to act as a research analyst. You have been given two distinct chunks of text from a larger document.
-        Your goal is to create a single, insightful question that requires a reader to connect or compare information found in **both** Chunk 1 and Chunk 2.
-        After formulating the question, provide a comprehensive answer, also synthesized from the information in both chunks.
+        """You are tasked with generating a challenging and analytical question based on two separate text chunks.
+
+        This question should *not* follow common patterns like “What is…”, “How does…”, or “Who…”. 
+        Instead, your goal is to formulate a **complex, synthesis-based prompt** that encourages deep reasoning. 
+        You may begin with phrases like:
+
+        - “Compare and contrast...”
+        - “Evaluate the impact of...”
+        - “Why might X differ from Y...”
+        - “In what way does the structure of A relate to B...”
+        - “Discuss how...”
+        - “Explain the relationship between...”
+        - “Describe the interplay of...”
+
+        Use your judgment to choose a phrasing appropriate to the content. Then, provide a concise answer that draws from **both Chunk 1 and Chunk 2**.
 
         CONTEXT CHUNK 1:
         ---
@@ -188,9 +200,29 @@ def generate_question_C(state):
         {chunk2}
         ---
 
-        Generate the complex, synthesis-based question and its corresponding answer.
+        Generate a non-generic, reasoning-heavy question and its corresponding answer.
         """
     )
+
+
+    # prompt = PromptTemplate.from_template(
+    #     """Your task is to act as a research analyst. You have been given two distinct chunks of text from a larger document.
+    #     Your goal is to create a single, insightful question that requires a reader to connect or compare information found in **both** Chunk 1 and Chunk 2.
+    #     After formulating the question, provide a comprehensive answer, also synthesized from the information in both chunks.
+
+    #     CONTEXT CHUNK 1:
+    #     ---
+    #     {chunk1}
+    #     ---
+
+    #     CONTEXT CHUNK 2:
+    #     ---
+    #     {chunk2}
+    #     ---
+
+    #     Generate the complex, synthesis-based question and its corresponding answer.
+    #     """
+    # )
     
     qa_gen_chain = prompt | llm.with_structured_output(QuestionC)
     # Use the truncated chunks for the LLM call
